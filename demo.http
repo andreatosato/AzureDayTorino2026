@@ -1,0 +1,59 @@
+@basic = http://localhost:5074
+@advance = http://localhost:5159
+@commerce = http://localhost:5297
+@basicSpecialist = http://localhost:5131
+@advanceSpecialist = http://localhost:5130
+
+### BASIC: interfaccia web
+GET {{basic}}/
+
+### BASIC: MCP
+POST {{basic}}/api/run
+Content-Type: application/json
+
+{"technology":"mcp","prompt":"Che tempo fa a Torino?"}
+
+### BASIC: A2A
+POST {{basic}}/api/run
+Content-Type: application/json
+
+{"technology":"a2a","prompt":"Dammi due consigli per visitare Torino. Leggi il meteo dal tuo tool."}
+
+### BASIC: Skill
+POST {{basic}}/api/run
+Content-Type: application/json
+
+{"technology":"skill","prompt":"Prepara un briefing per visitare Torino: meteo, cosa portare e attenzioni."}
+
+### ADVANCE: interfaccia web
+GET {{advance}}/
+
+### ADVANCE: Skill -> A2A -> MCP -> Commerce
+POST {{advance}}/api/run
+Content-Type: application/json
+
+{"prompt":"L'ordine ORD-1042 doveva arrivare oggi. Domani parto per Torino: quali alternative ho? Non confermare nulla senza chiedermelo."}
+
+### Errore di validazione: 400
+POST {{basic}}/api/run
+Content-Type: application/json
+
+{"technology":"mcp","prompt":""}
+
+### OpenAPI (Development)
+GET {{basic}}/openapi/v1.json
+
+###
+GET {{advance}}/openapi/v1.json
+
+### Due letture mock, senza modello
+GET {{commerce}}/orders/ORD-1042
+
+###
+GET {{commerce}}/delivery-options?orderId=ORD-1042
+
+### Agent Card
+GET {{basicSpecialist}}/cards/travel
+
+###
+GET {{advanceSpecialist}}/cards/logistics

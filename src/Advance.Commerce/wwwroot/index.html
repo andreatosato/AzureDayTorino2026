@@ -1,0 +1,49 @@
+<!doctype html>
+<html lang="it">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>ADVANCE | Commerce</title>
+  <link rel="stylesheet" href="/demo.css">
+  <script src="/demo.js" defer></script>
+</head>
+<body>
+<main>
+  <header><span class="eyebrow">AZURE DAY TORINO / DEMO LAB</span><span class="badge">Microsoft Agent Framework + Aspire</span></header>
+  <section class="intro">
+    <p class="eyebrow">02 / LE TECNOLOGIE INSIEME</p>
+    <h1>ADVANCE<span class="dot">.</span></h1>
+    <p class="lead">Il pacco mi serve domani! Un caso Commerce, tre tecnologie.</p>
+  </section>
+  <div class="workspace">
+    <section class="panel">
+      <h2>Parla con l'assistenza</h2>
+      <form id="demo-form" action="/api/run">
+        <label class="prompt-label" for="prompt">La tua richiesta sull'ordine</label>
+        <textarea id="prompt" name="prompt" required maxlength="2000" rows="6">L'ordine ORD-1042 doveva arrivare oggi. Domani parto per Torino: quali alternative ho? Non confermare nulla senza chiedermelo.</textarea>
+        <button class="sample" type="button" id="sample">Ripristina esempio</button>
+        <div class="submit-row"><button class="primary" type="submit">Invia richiesta <span aria-hidden="true">&rarr;</span></button><span>Ogni invio riparte da zero.</span></div>
+      </form>
+      <div class="fixtures"><strong>Ordini disponibili</strong><p>ORD-1041: regolare<br>ORD-1042: in ritardo, con alternative<br>ORD-1043: in ritardo, senza alternative</p></div>
+    </section>
+    <aside class="panel explainer">
+      <span class="eyebrow">IL PERCORSO INTEGRATO</span>
+      <h2>Non tre risposte separate.</h2>
+      <ol class="steps">
+        <li><strong>Skill</strong><span>L'assistente carica la procedura Commerce.</span></li>
+        <li><strong>A2A</strong><span>Delega la richiesta allo specialista logistico remoto.</span></li>
+        <li><strong>MCP</strong><span>Lo specialista legge ordine e alternative usando tool remoti.</span></li>
+      </ol>
+      <div class="flow">Assistente + Skill &rarr; A2A &rarr; specialista &rarr; MCP &rarr; API mock</div>
+      <p class="note">Orologio demo: 5 ottobre 2026, ore 09:00 UTC+02. Scadenza: 6 ottobre, ore 09:00. Il ritiro al deposito oggi e' gratuito.</p>
+      <p class="note">Percorso previsto, non una traccia live. Se manca il numero d'ordine, l'assistente puo' chiederlo senza delegare. Per le chiamate effettive usa Aspire.</p>
+    </aside>
+  </div>
+  <section class="panel response-panel">
+    <div class="response-heading"><h2>Risposta dell'assistenza</h2><span id="status" role="status" aria-live="polite">Pronto</span></div>
+    <pre id="answer" aria-live="polite">Invia la richiesta per vedere Skill, A2A e MCP lavorare insieme.</pre>
+  </section>
+  <footer>Demo in sola lettura. Nessuna modifica all'ordine. Le chiamate al modello reale consumano token. Nessuna memoria tra gli invii.</footer>
+</main>
+</body>
+</html>

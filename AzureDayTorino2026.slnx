@@ -1,0 +1,25 @@
+<Solution>
+  <Folder Name="/Basic/">
+    <Project Path="src/Basic.AppHost/Basic.AppHost.csproj" />
+    <Project Path="src/Basic.Orchestrator/Basic.Orchestrator.csproj" />
+    <Project Path="src/Basic.McpServer/Basic.McpServer.csproj" />
+    <Project Path="src/Basic.A2A/Basic.A2A.csproj" />
+    <Project Path="src/Basic.Skill/Basic.Skill.csproj" />
+    <Project Path="src/Basic.Data/Basic.Data.csproj" />
+  </Folder>
+  <Folder Name="/Advance/">
+    <Project Path="src/Advance.AppHost/Advance.AppHost.csproj" />
+    <Project Path="src/Advance.Commerce/Advance.Commerce.csproj" />
+    <Project Path="src/Advance.McpServer/Advance.McpServer.csproj" />
+    <Project Path="src/Advance.A2A/Advance.A2A.csproj" />
+    <Project Path="src/Advance.MockApi/Advance.MockApi.csproj" />
+    <Project Path="src/Advance.Data/Advance.Data.csproj" />
+  </Folder>
+  <Folder Name="/Shared/">
+    <Project Path="src/Shared.Hosting/Shared.Hosting.csproj" />
+    <Project Path="src/Shared.ServiceDefaults/Shared.ServiceDefaults.csproj" />
+  </Folder>
+  <Folder Name="/Tests/">
+    <Project Path="tests/Demo.Tests/Demo.Tests.csproj" />
+  </Folder>
+</Solution>

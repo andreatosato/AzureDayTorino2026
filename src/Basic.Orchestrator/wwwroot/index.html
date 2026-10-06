@@ -1,0 +1,53 @@
+<!doctype html>
+<html lang="it">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>BASIC | MCP, A2A, Skill</title>
+  <link rel="stylesheet" href="/demo.css">
+  <script src="/demo.js" defer></script>
+</head>
+<body>
+<main>
+  <header><span class="eyebrow">AZURE DAY TORINO / DEMO LAB</span><span class="badge">Microsoft Agent Framework + Aspire</span></header>
+  <section class="intro">
+    <p class="eyebrow">01 / LE SINGOLE TECNOLOGIE</p>
+    <h1>BASIC<span class="dot">.</span></h1>
+    <p class="lead">Una richiesta. Una tecnologia. Un concetto da portare a casa.</p>
+  </section>
+  <div class="workspace">
+    <section class="panel">
+      <h2>Prova una tecnologia</h2>
+      <form id="demo-form" action="/api/run">
+        <fieldset>
+          <legend>1. Scegli il percorso</legend>
+          <div class="choices">
+            <label><input type="radio" name="technology" value="mcp" checked><strong>MCP</strong><span>Usa un tool</span></label>
+            <label><input type="radio" name="technology" value="a2a"><strong>A2A</strong><span>Delega a un agente</span></label>
+            <label><input type="radio" name="technology" value="skill"><strong>Skill</strong><span>Carica una procedura</span></label>
+          </div>
+        </fieldset>
+        <label class="prompt-label" for="prompt">2. Scrivi la richiesta</label>
+        <textarea id="prompt" name="prompt" required maxlength="2000" rows="5">Che tempo fa a Torino?</textarea>
+        <button class="sample" type="button" id="sample">Ripristina esempio</button>
+        <div class="submit-row"><button class="primary" type="submit">Invia richiesta <span aria-hidden="true">&rarr;</span></button><span>Ogni invio riparte da zero.</span></div>
+      </form>
+    </section>
+    <aside class="panel explainer">
+      <span class="eyebrow">COSA SUCCEDE</span>
+      <h2 id="concept-title">MCP: uso uno strumento</h2>
+      <p id="concept-description">L'agente scopre il tool get_weather sul server MCP e lo chiama per leggere il meteo.</p>
+      <div class="flow" id="flow">Richiesta &rarr; agente &rarr; tool MCP &rarr; meteo</div>
+      <p class="note" id="fixture-note">Il mock meteo conosce solo Torino: pioggia, 14 &deg;C. Non consulta previsioni reali.</p>
+      <p class="note">Il diagramma descrive il percorso previsto, non una traccia dell'esecuzione. Per tool e chiamate effettive usa le tracce Aspire.</p>
+      <p class="note"><strong>Orchestrator:</strong> riceve la richiesta e avvia il percorso scelto con un semplice switch. Nessun planner e nessuna dipendenza da Commerce.</p>
+    </aside>
+  </div>
+  <section class="panel response-panel">
+    <div class="response-heading"><h2>Risposta</h2><span id="status" role="status" aria-live="polite">Pronto</span></div>
+    <pre id="answer" aria-live="polite">Scegli una tecnologia e invia la tua prima richiesta.</pre>
+  </section>
+  <footer>Dati sintetici. Le risposte usano il modello reale configurato in Aspire e consumano token. Nessuna scrittura, nessuna prenotazione.</footer>
+</main>
+</body>
+</html>

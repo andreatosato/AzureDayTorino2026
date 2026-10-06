@@ -1,0 +1,41 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "Build demo .NET",
+      "type": "process",
+      "command": "dotnet",
+      "args": ["build", "${workspaceFolder}\\AzureDayTorino2026.slnx"],
+      "problemMatcher": "$msCompile",
+      "group": "build"
+    },
+    {
+      "label": "Build BASIC",
+      "type": "process",
+      "command": "dotnet",
+      "args": ["build", "${workspaceFolder}\\src\\Basic.AppHost\\Basic.AppHost.csproj"],
+      "problemMatcher": "$msCompile"
+    },
+    {
+      "label": "Build ADVANCE",
+      "type": "process",
+      "command": "dotnet",
+      "args": ["build", "${workspaceFolder}\\src\\Advance.AppHost\\Advance.AppHost.csproj"],
+      "problemMatcher": "$msCompile"
+    },
+    {
+      "label": "Avvia BASIC",
+      "type": "process",
+      "command": "dotnet",
+      "args": ["run", "--project", "${workspaceFolder}\\src\\Basic.AppHost", "--launch-profile", "http"],
+      "problemMatcher": []
+    },
+    {
+      "label": "Avvia ADVANCE",
+      "type": "process",
+      "command": "dotnet",
+      "args": ["run", "--project", "${workspaceFolder}\\src\\Advance.AppHost", "--launch-profile", "http"],
+      "problemMatcher": []
+    }
+  ]
+}

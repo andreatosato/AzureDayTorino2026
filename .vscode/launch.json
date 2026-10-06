@@ -1,0 +1,46 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "BASIC - Aspire",
+      "type": "coreclr",
+      "request": "launch",
+      "preLaunchTask": "Build BASIC",
+      "program": "${workspaceFolder}\\src\\Basic.AppHost\\bin\\Debug\\net10.0\\Basic.AppHost.dll",
+      "cwd": "${workspaceFolder}\\src\\Basic.AppHost",
+      "console": "integratedTerminal",
+      "env": {
+        "ASPNETCORE_ENVIRONMENT": "Development",
+        "DOTNET_ENVIRONMENT": "Development",
+        "ASPNETCORE_URLS": "http://localhost:15018",
+        "ASPIRE_ALLOW_UNSECURED_TRANSPORT": "true",
+        "ASPIRE_DASHBOARD_OTLP_ENDPOINT_URL": "http://localhost:19128",
+        "ASPIRE_RESOURCE_SERVICE_ENDPOINT_URL": "http://localhost:20079"
+      }
+    },
+    {
+      "name": "ADVANCE - Aspire",
+      "type": "coreclr",
+      "request": "launch",
+      "preLaunchTask": "Build ADVANCE",
+      "program": "${workspaceFolder}\\src\\Advance.AppHost\\bin\\Debug\\net10.0\\Advance.AppHost.dll",
+      "cwd": "${workspaceFolder}\\src\\Advance.AppHost",
+      "console": "integratedTerminal",
+      "env": {
+        "ASPNETCORE_ENVIRONMENT": "Development",
+        "DOTNET_ENVIRONMENT": "Development",
+        "ASPNETCORE_URLS": "http://localhost:15019",
+        "ASPIRE_ALLOW_UNSECURED_TRANSPORT": "true",
+        "ASPIRE_DASHBOARD_OTLP_ENDPOINT_URL": "http://localhost:19129",
+        "ASPIRE_RESOURCE_SERVICE_ENDPOINT_URL": "http://localhost:20080"
+      }
+    }
+  ],
+  "compounds": [
+    {
+      "name": "BASIC + ADVANCE",
+      "configurations": ["BASIC - Aspire", "ADVANCE - Aspire"],
+      "stopAll": true
+    }
+  ]
+}

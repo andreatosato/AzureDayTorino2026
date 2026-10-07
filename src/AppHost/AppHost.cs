@@ -3,7 +3,7 @@ string Required(string name) => builder.Configuration[$"Model:{name}"] is { Leng
     ? value
     : throw new InvalidOperationException(
         $"Manca Model:{name}. Configura Model:Endpoint, Model:Name e l'autenticazione " +
-        "con dotnet user-secrets --project src\\Advance.AppHost set oppure Model__* nell'ambiente. Vedi README.md.");
+        "con dotnet user-secrets --project src\\AppHost set oppure Model__* nell'ambiente. Vedi README.md.");
 var endpoint = Required("Endpoint");
 var model = Required("Name");
 var authentication = builder.Configuration["Model:Authentication"] ?? "ApiKey";
@@ -16,19 +16,34 @@ var modelKey = key is not null
         secret: true, publishValueAsDefault: false)
     : null;
 
+var basicMcp = builder.AddProject<Projects.Basic_McpServer>("basic-mcp-server", launchProfileName: "http")
+    .WithHttpHealthCheck("/health")
+    .WithExplicitStart();
+var basicSpecialist = builder.AddProject<Projects.Basic_A2A>("basic-specialists", launchProfileName: "http")
+    .WithHttpHealthCheck("/health")
+    .WithExplicitStart();
+
+var basic = builder.AddProject<Projects.Basic_Orchestrator>("basic", launchProfileName: "http")
+    .WithReference(basicMcp, "mcp-server").WaitFor(basicMcp)
+    .WithReference(basicSpecialist, "specialists").WaitFor(basicSpecialist)
+    .WithExplicitStart();
+
 var commerce = builder.AddProject<Projects.Advance_MockApi>("commerce", launchProfileName: "http")
-    .WithHttpHealthCheck("/health");
-var mcpServer = builder.AddProject<Projects.Advance_McpServer>("mcp-server", launchProfileName: "http")
+    .WithHttpHealthCheck("/health")
+    .WithExplicitStart();
+var advanceMcp = builder.AddProject<Projects.Advance_McpServer>("advance-mcp-server", launchProfileName: "http")
     .WithReference(commerce).WaitFor(commerce)
-    .WithHttpHealthCheck("/health");
-var specialists = builder.AddProject<Projects.Advance_A2A>("specialists", launchProfileName: "http")
-    .WithReference(mcpServer).WaitFor(mcpServer)
-    .WithHttpHealthCheck("/health");
-
+    .WithHttpHealthCheck("/health")
+    .WithExplicitStart();
+var advanceSpecialist = builder.AddProject<Projects.Advance_A2A>("advance-specialists", launchProfileName: "http")
+    .WithReference(advanceMcp, "mcp-server").WaitFor(advanceMcp)
+    .WithHttpHealthCheck("/health")
+    .WithExplicitStart();
 var advance = builder.AddProject<Projects.Advance_Commerce>("advance", launchProfileName: "http")
-    .WithReference(specialists).WaitFor(specialists);
+    .WithReference(advanceSpecialist, "specialists").WaitFor(advanceSpecialist)
+    .WithExplicitStart();
 
-foreach (var project in new[] { specialists, advance })
+foreach (var project in new[] { basicSpecialist, basic, advanceSpecialist, advance })
 {
     project.WithEnvironment("Model__Endpoint", endpoint)
         .WithEnvironment("Model__Name", model)

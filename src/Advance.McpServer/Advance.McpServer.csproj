@@ -12,7 +12,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Shared.Hosting\Shared.Hosting.csproj" />
+    <ProjectReference Include="..\Shared.ServiceDefaults\Shared.ServiceDefaults.csproj" />
   </ItemGroup>
 
 </Project>

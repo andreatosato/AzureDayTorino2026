@@ -2,7 +2,7 @@ using A2A;
 using Basic.A2A;
 using Microsoft.Agents.AI;
 using Microsoft.Extensions.AI;
-using Shared.Hosting;
+using Shared.ServiceDefaults;
 
 var builder = WebApplication.CreateBuilder(args);
 builder.AddDemoServices();

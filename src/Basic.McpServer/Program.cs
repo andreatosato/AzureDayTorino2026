@@ -1,5 +1,5 @@
 using Basic.McpServer;
-using Shared.Hosting;
+using Shared.ServiceDefaults;
 
 var builder = WebApplication.CreateBuilder(args);
 builder.AddDemoServices(withModel: false);

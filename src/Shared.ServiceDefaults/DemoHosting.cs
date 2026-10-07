@@ -12,7 +12,7 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using OpenAI;
 
-namespace Shared.Hosting;
+namespace Shared.ServiceDefaults;
 
 public static class DemoHosting
 {

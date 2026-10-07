@@ -4,6 +4,10 @@
     <ProjectReference Include="..\Basic.McpServer\Basic.McpServer.csproj" />
     <ProjectReference Include="..\Basic.A2A\Basic.A2A.csproj" />
     <ProjectReference Include="..\Basic.Orchestrator\Basic.Orchestrator.csproj" />
+    <ProjectReference Include="..\Advance.MockApi\Advance.MockApi.csproj" />
+    <ProjectReference Include="..\Advance.McpServer\Advance.McpServer.csproj" />
+    <ProjectReference Include="..\Advance.A2A\Advance.A2A.csproj" />
+    <ProjectReference Include="..\Advance.Commerce\Advance.Commerce.csproj" />
   </ItemGroup>
 
   <PropertyGroup>

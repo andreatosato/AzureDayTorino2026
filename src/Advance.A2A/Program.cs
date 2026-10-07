@@ -1,5 +1,5 @@
 using A2A;
-using Shared.Hosting;
+using Shared.ServiceDefaults;
 using Advance.A2A;
 using Microsoft.Agents.AI;
 using Microsoft.Extensions.AI;

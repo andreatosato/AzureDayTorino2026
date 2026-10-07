@@ -2,7 +2,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Advance.Data\Advance.Data.csproj" />
-    <ProjectReference Include="..\Shared.Hosting\Shared.Hosting.csproj" />
+    <ProjectReference Include="..\Shared.ServiceDefaults\Shared.ServiceDefaults.csproj" />
   </ItemGroup>
 
   <PropertyGroup>

@@ -236,18 +236,12 @@
       "advance.data": {
         "type": "Project"
       },
-      "shared.hosting": {
+      "shared.servicedefaults": {
         "type": "Project",
         "dependencies": {
           "Azure.Identity": "[1.21.0, )",
           "Microsoft.Agents.AI": "[1.23.0, )",
           "Microsoft.Extensions.AI.OpenAI": "[10.10.0, )",
-          "Shared.ServiceDefaults": "[1.0.0, )"
-        }
-      },
-      "shared.servicedefaults": {
-        "type": "Project",
-        "dependencies": {
           "Microsoft.Extensions.ServiceDiscovery": "[10.0.0, )",
           "OpenTelemetry.Exporter.OpenTelemetryProtocol": "[1.18.0, )",
           "OpenTelemetry.Extensions.Hosting": "[1.18.0, )",

@@ -1,7 +1,7 @@
 using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.FileProviders;
 
-namespace Shared.Hosting;
+namespace Shared.ServiceDefaults;
 
 public static class DemoUi
 {

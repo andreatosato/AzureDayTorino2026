@@ -6,7 +6,7 @@
   </PropertyGroup>
   <ItemGroup>
     <ProjectReference Include="..\Basic.Data\Basic.Data.csproj" />
-    <ProjectReference Include="..\Shared.Hosting\Shared.Hosting.csproj" />
+    <ProjectReference Include="..\Shared.ServiceDefaults\Shared.ServiceDefaults.csproj" />
     <PackageReference Include="ModelContextProtocol.AspNetCore" Version="1.3.0" />
   </ItemGroup>
 </Project>

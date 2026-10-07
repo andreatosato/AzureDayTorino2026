@@ -1,5 +1,5 @@
 using Advance.McpServer;
-using Shared.Hosting;
+using Shared.ServiceDefaults;
 using Advance.Data;
 
 var builder = WebApplication.CreateBuilder(args);

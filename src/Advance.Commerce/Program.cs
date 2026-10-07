@@ -1,5 +1,5 @@
 using Advance.Commerce;
-using Shared.Hosting;
+using Shared.ServiceDefaults;
 using Microsoft.Extensions.AI;
 
 var builder = WebApplication.CreateBuilder(args);

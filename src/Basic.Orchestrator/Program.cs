@@ -1,6 +1,6 @@
 using Basic.Orchestrator;
 using Basic.Skill;
-using Shared.Hosting;
+using Shared.ServiceDefaults;
 using Microsoft.Extensions.AI;
 
 var builder = WebApplication.CreateBuilder(args);

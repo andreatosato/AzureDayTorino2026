@@ -1,7 +1,7 @@
 using System.ComponentModel;
 using System.Net.Http.Json;
 using A2A;
-using Shared.Hosting;
+using Shared.ServiceDefaults;
 using Advance.Data;
 using Microsoft.Agents.AI;
 using Microsoft.Extensions.AI;

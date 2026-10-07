@@ -1,6 +1,6 @@
 # MCP server, A2A, Skill, mamma mia che mal di testAI!
 
-**Due demo indipendenti .NET: BASIC e ADVANCE.** Una solution, due AppHost Aspire
+**Due demo indipendenti .NET: BASIC e ADVANCE.** Una solution, un unico AppHost Aspire
 e Microsoft Agent Framework in C#. Nessuna scrittura, nessun database.
 
 | Demo | Apri nel browser dopo l'avvio Aspire | Contenuto |
@@ -30,16 +30,16 @@ tramite Microsoft Entra ID. Non occorre un agente ospitato su Foundry.
 
 Accedere con `az login` se la sessione non e' gia' valida. L'utente deve avere
 permessi di inferenza sul modello (ad esempio Cognitive Services OpenAI User).
-Configurare una volta in uno dei due AppHost: **Basic.AppHost e Advance.AppHost
-condividono lo stesso UserSecretsId** per riutilizzare il Foundry gia' scelto.
-Non condividono servizi o logica di dominio.
+Configurare una volta nell'unico **AppHost**, che mantiene lo stesso UserSecretsId
+dei precedenti AppHost per riutilizzare il Foundry gia' scelto.
+Le demo non condividono servizi o logica di dominio.
 
 ```powershell
-dotnet user-secrets --project .\src\Advance.AppHost set "Model:Endpoint" "https://ai-1nn0vaai-demo-swc-6a198800.openai.azure.com/openai/v1/"
-dotnet user-secrets --project .\src\Advance.AppHost set "Model:Name" "gpt-6-sol"
-dotnet user-secrets --project .\src\Advance.AppHost set "Model:ReasoningEffort" "None"
-dotnet user-secrets --project .\src\Advance.AppHost set "Model:Authentication" "AzureCli"
-dotnet user-secrets --project .\src\Advance.AppHost set "Model:TenantId" "16b3c013-d300-468d-ac64-7eda0820b6d3"
+dotnet user-secrets --project .\src\AppHost set "Model:Endpoint" "https://ai-1nn0vaai-demo-swc-6a198800.openai.azure.com/openai/v1/"
+dotnet user-secrets --project .\src\AppHost set "Model:Name" "gpt-6-sol"
+dotnet user-secrets --project .\src\AppHost set "Model:ReasoningEffort" "None"
+dotnet user-secrets --project .\src\AppHost set "Model:Authentication" "AzureCli"
+dotnet user-secrets --project .\src\AppHost set "Model:TenantId" "16b3c013-d300-468d-ac64-7eda0820b6d3"
 ```
 
 Il deployment `gpt-6-sol` esiste gia': non viene creato o modificato.
@@ -47,7 +47,7 @@ Con GPT-6 SOL, Chat Completions richiede `reasoning_effort=none` per usare
 i tool: `Model:ReasoningEffort=None` viene applicato a tutti gli agenti,
 anche agli specialisti A2A. Per usare il reasoning con i tool servirebbe
 passare alla Responses API. Cambiando modello, rimuovere questa opzione
-se non supportata: `dotnet user-secrets --project .\src\Advance.AppHost remove "Model:ReasoningEffort"`.
+se non supportata: `dotnet user-secrets --project .\src\AppHost remove "Model:ReasoningEffort"`.
 Il token viene ottenuto e rinnovato dal SDK, senza salvarlo nei file del progetto.
 Questa modalita' e' pensata per i processi locali Aspire, non per il deployment cloud.
 
@@ -56,10 +56,10 @@ Questa modalita' e' pensata per i processi locali Aspire, non per il deployment 
 Per un'altra risorsa che accetta chiavi:
 
 ```powershell
-dotnet user-secrets --project .\src\Advance.AppHost set "Model:Authentication" "ApiKey"
-dotnet user-secrets --project .\src\Advance.AppHost set "Model:Endpoint" "https://NOME-RISORSA.openai.azure.com/openai/v1/"
-dotnet user-secrets --project .\src\Advance.AppHost set "Model:Name" "NOME-DEPLOYMENT"
-dotnet user-secrets --project .\src\Advance.AppHost set "Model:ApiKey" "LA-TUA-CHIAVE"
+dotnet user-secrets --project .\src\AppHost set "Model:Authentication" "ApiKey"
+dotnet user-secrets --project .\src\AppHost set "Model:Endpoint" "https://NOME-RISORSA.openai.azure.com/openai/v1/"
+dotnet user-secrets --project .\src\AppHost set "Model:Name" "NOME-DEPLOYMENT"
+dotnet user-secrets --project .\src\AppHost set "Model:ApiKey" "LA-TUA-CHIAVE"
 ```
 
 I valori sono **segnaposto**, non configurazioni funzionanti. Non incollare la
@@ -81,36 +81,42 @@ I test, invece, non richiedono credenziali.
 
 ```powershell
 dotnet build .\AzureDayTorino2026.slnx
-# BASIC: nessuna dipendenza dai progetti Advance.*
-dotnet run --project .\src\Basic.AppHost --launch-profile http
-# ADVANCE: in un altro terminale, oppure da sola
-dotnet run --project .\src\Advance.AppHost --launch-profile http
+dotnet run --project .\src\AppHost --launch-profile http
 ```
 
-Aprire il link di login della relativa dashboard stampato nel terminale.
-Ogni AppHost avvia soltanto la propria demo con service discovery.
-Si possono eseguire separatamente oppure contemporaneamente, con porte distinte.
+Aprire il link di login della dashboard stampato nel terminale.
+Tutte le sette app sono visibili ma **nessuna parte automaticamente**:
+scegliere **Start** sulla risorsa da eseguire. Le due demo possono girare
+separatamente o contemporaneamente nella stessa dashboard.
+Avviare anche le dipendenze, in questo ordine:
+
+- **BASIC**: `basic-mcp-server` e `basic-specialists`, poi `basic`.
+- **ADVANCE**: `commerce`, `advance-mcp-server`, `advance-specialists`, poi `advance`.
+
+Le attese di salute sono mantenute: un'app resta in attesa finche' le proprie
+dipendenze non sono avviate e sane. Start non avvia automaticamente le dipendenze.
+Usare **Stop** sulla singola risorsa per fermarla.
 Il profilo HTTP e' **solo per sviluppo locale su loopback**.
 
-In VS Code: **F5**, configurazione **BASIC - Aspire** oppure **ADVANCE - Aspire**.
-La configurazione composta **BASIC + ADVANCE** le avvia entrambe.
-Sono disponibili i task **Avvia BASIC** e **Avvia ADVANCE**.
+In VS Code: **F5**, configurazione **AppHost - Aspire**.
+E' disponibile anche il task **Avvia AppHost**.
 F5 avvia Aspire; non e' il Foundry Agent Inspector.
 
 | Demo | Risorsa | URL locale predefinito | Funzione |
 | --- | --- | --- | --- |
 | BASIC | basic | http://localhost:5074 | Orchestrator e piccola UI delle tecnologie |
-| BASIC | mcp-server | http://localhost:5296 | Solo get_weather su `/mcp` |
-| BASIC | specialists | http://localhost:5131 | Solo agente viaggio A2A |
-| BASIC | dashboard | http://localhost:15018 | Telemetria BASIC |
+| BASIC | basic-mcp-server | http://localhost:5296 | Solo get_weather su `/mcp` |
+| BASIC | basic-specialists | http://localhost:5131 | Solo agente viaggio A2A |
 | ADVANCE | advance | http://localhost:5159 | UI Commerce integrata |
 | ADVANCE | commerce | http://localhost:5297 | Due GET mock |
-| ADVANCE | mcp-server | http://localhost:5295 | Solo tool ordini e alternative |
-| ADVANCE | specialists | http://localhost:5130 | Solo agente logistico A2A |
-| ADVANCE | dashboard | http://localhost:15019 | Telemetria ADVANCE |
+| ADVANCE | advance-mcp-server | http://localhost:5295 | Solo tool ordini e alternative |
+| ADVANCE | advance-specialists | http://localhost:5130 | Solo agente logistico A2A |
+| Entrambe | dashboard | http://localhost:15018 | Telemetria di tutte le app avviate |
 
 Le porte sono nei `launchSettings.json`; i client fra servizi usano nomi logici,
-non quelle porte. Se una porta e' occupata, modificarla nel relativo progetto
+non quelle porte. L'AppHost assegna gli alias `mcp-server` e `specialists` alle
+risorse della rispettiva demo, senza mescolare i servizi BASIC e ADVANCE.
+Se una porta e' occupata, modificarla nel relativo progetto
 e nei soli comandi client del relatore. La dashboard mostra gli URL effettivi.
 
 ## 3. BASIC: un concetto alla volta
@@ -162,25 +168,24 @@ Per le chiamate effettive usare log e tracce della dashboard Aspire.
 
 | Progetto | Responsabilita' |
 | --- | --- |
-| [Basic.AppHost](src/Basic.AppHost) | Avvia soltanto BASIC |
+| [AppHost](src/AppHost) | Dashboard unica, selezione manuale delle app BASIC e ADVANCE |
 | [Basic.Orchestrator](src/Basic.Orchestrator) | Dispatch esplicito, client MCP/A2A e piccola UI |
 | [Basic.McpServer](src/Basic.McpServer) | Un tool meteo remoto, senza modello |
 | [Basic.A2A](src/Basic.A2A) | Un agente di viaggio remoto con tool locale |
 | [Basic.Skill](src/Basic.Skill) | Un provider, una procedura Markdown, nessun server |
 | [Basic.Data](src/Basic.Data) | Solo meteo in memoria e istruzioni comuni BASIC |
-| [Advance.AppHost](src/Advance.AppHost) | Avvia soltanto ADVANCE |
 | [Advance.Commerce](src/Advance.Commerce) | Pagina ADVANCE, Skill Commerce e delega |
 | [Advance.A2A](src/Advance.A2A) | Solo agente logistico con client MCP |
 | [Advance.McpServer](src/Advance.McpServer) | Solo tool ordini e alternative |
 | [Advance.MockApi](src/Advance.MockApi) | Due GET con dati sintetici |
 | [Advance.Data](src/Advance.Data) | Ordini e alternative in memoria, client del mock |
-| [Shared.Hosting](src/Shared.Hosting) | Configurazione modello, errori e piccoli asset comuni della UI |
-| [Shared.ServiceDefaults](src/Shared.ServiceDefaults) | Health check, discovery e telemetria |
+| [Shared.ServiceDefaults](src/Shared.ServiceDefaults) | Configurazione modello, errori, asset comuni della UI, health check, discovery e telemetria |
 
 I progetti `Demo.*` di produzione sono stati sostituiti. La solution raggruppa
-i progetti in **Basic**, **Advance**, **Shared** e **Tests**.
-I due progetti Shared sono plumbing tecnico, non aggiungono concetti da spiegare.
-Non contengono dati meteo, dati Commerce o orchestrazione agentica.
+i progetti in **Basic**, **Advance**, **Shared** e **Tests**, con l'**AppHost** unico
+alla radice della solution.
+L'unico progetto Shared e' plumbing tecnico, non aggiunge concetti da spiegare.
+Non contiene dati meteo, dati Commerce o orchestrazione agentica.
 I vecchi ingressi per tecnologia sono stati sostituiti: non esistono piu'
 `POST /base` e `POST /ecommerce`. Entrambe le UI usano `POST /api/run`
 con JSON e restituiscono testo. BASIC richiede `technology` e `prompt`;
@@ -195,7 +200,7 @@ Le chiamate manuali sono in [demo.http](demo.http); OpenAPI e' disponibile su
 | BASIC / MCP | [McpDemo.cs](src/Basic.Orchestrator/McpDemo.cs), [WeatherTools.cs](src/Basic.McpServer/WeatherTools.cs) |
 | BASIC / A2A | [A2ADemo.cs](src/Basic.Orchestrator/A2ADemo.cs), [TravelTipsAgent.cs](src/Basic.A2A/TravelTipsAgent.cs) |
 | BASIC / Skill | [SkillDemo.cs](src/Basic.Skill/SkillDemo.cs), [SKILL.md](src/Basic.Skill/skills/base/city-briefing/SKILL.md), [CityBriefingTools.cs](src/Basic.Skill/CityBriefingTools.cs) |
-| BASIC / Orchestrator | [Program.cs](src/Basic.Orchestrator/Program.cs), [AppHost.cs](src/Basic.AppHost/AppHost.cs) |
+| BASIC / Orchestrator | [Program.cs](src/Basic.Orchestrator/Program.cs), [AppHost.cs](src/AppHost/AppHost.cs) |
 | ADVANCE | [CommerceDemo.cs](src/Advance.Commerce/CommerceDemo.cs), [SKILL.md](src/Advance.Commerce/skills/advance/commerce-assistance/SKILL.md), [LogisticsAgent.cs](src/Advance.A2A/LogisticsAgent.cs), [Tools.cs](src/Advance.McpServer/Tools.cs) |
 
 Il server MCP BASIC espone un solo tool. BASIC scopre e seleziona il tool meteo;
@@ -242,7 +247,13 @@ i server MCP e A2A dei due gruppi espongano soltanto le proprie capacita'.
 Verifica del 6 ottobre 2026: **21 test superati**, build senza errori o warning
 e pubblicazione delle UI con le Skill riuscita. BASIC e ADVANCE sono state
 provate separatamente con **GPT-6 SOL** reale, senza avviare l'altra demo.
-Verificato anche l'avvio contemporaneo dei due AppHost su porte distinte.
+Questa verifica precede l'unificazione degli AppHost e non certifica il nuovo avvio manuale.
+
+Verifica del 7 ottobre 2026 sull'AppHost unico: build senza errori o warning,
+restore in locked mode riuscito e **6 test mirati superati** (protocolli,
+isolamento BASIC/ADVANCE e UI/OpenAPI). Nella dashboard tutte le sette app
+risultano inizialmente `Not started`; dopo Start manuale, i sette endpoint
+`/health` rispondono HTTP 200. Nessuna inferenza LLM eseguita in questa verifica.
 
 ## 6. Versioni e scelte
 
@@ -257,9 +268,10 @@ Verificato anche l'avvio contemporaneo dei due AppHost su porte distinte.
 e dipendenze transitive in `packages.lock.json`. Per verificarle senza
 aggiornamenti: `dotnet restore .\AzureDayTorino2026.slnx --locked-mode`.
 
-La libreria [Shared.Hosting](src/Shared.Hosting) evita di duplicare la
-configurazione modello e la gestione degli errori; non e' un framework di orchestrazione.
-[ServiceDefaults](src/Shared.ServiceDefaults) contiene solo plumbing Aspire.
+La libreria [Shared.ServiceDefaults](src/Shared.ServiceDefaults) evita di duplicare
+la configurazione modello, la gestione degli errori e gli asset comuni della UI,
+e contiene anche health check, service discovery e telemetria Aspire.
+Non e' un framework di orchestrazione.
 Non spiegarli riga per riga prima delle demo.
 
 Nella versione scelta il provider Skill puo' pubblicizzare anche i tool

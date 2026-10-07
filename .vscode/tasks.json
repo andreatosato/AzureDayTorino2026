@@ -10,31 +10,17 @@
       "group": "build"
     },
     {
-      "label": "Build BASIC",
+      "label": "Build AppHost",
       "type": "process",
       "command": "dotnet",
-      "args": ["build", "${workspaceFolder}\\src\\Basic.AppHost\\Basic.AppHost.csproj"],
+      "args": ["build", "${workspaceFolder}\\src\\AppHost\\AppHost.csproj"],
       "problemMatcher": "$msCompile"
     },
     {
-      "label": "Build ADVANCE",
+      "label": "Avvia AppHost",
       "type": "process",
       "command": "dotnet",
-      "args": ["build", "${workspaceFolder}\\src\\Advance.AppHost\\Advance.AppHost.csproj"],
-      "problemMatcher": "$msCompile"
-    },
-    {
-      "label": "Avvia BASIC",
-      "type": "process",
-      "command": "dotnet",
-      "args": ["run", "--project", "${workspaceFolder}\\src\\Basic.AppHost", "--launch-profile", "http"],
-      "problemMatcher": []
-    },
-    {
-      "label": "Avvia ADVANCE",
-      "type": "process",
-      "command": "dotnet",
-      "args": ["run", "--project", "${workspaceFolder}\\src\\Advance.AppHost", "--launch-profile", "http"],
+      "args": ["run", "--project", "${workspaceFolder}\\src\\AppHost", "--launch-profile", "http"],
       "problemMatcher": []
     }
   ]

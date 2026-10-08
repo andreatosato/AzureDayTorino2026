@@ -316,7 +316,8 @@ public sealed class DemoTests
             options => LoadSkill(options, "commerce-assistance"),
             _ => ScriptedChatClient.Call("delegate_logistics", new() { ["question"] = Scenario.OrderQuestion }),
             _ => ScriptedChatClient.Answer("Ritiro al deposito: puoi raggiungerlo?"));
-        await using var demo = Start<AdvanceProgram>(model, specialists: remoteHttp.BaseAddress);
+        using var exporter = new RecordingExporter();
+        await using var demo = Start<AdvanceProgram>(model, specialists: remoteHttp.BaseAddress, exporter: exporter);
         using var http = demo.CreateClient();
         var response = await http.PostAsJsonAsync("/api/run", new AdvanceRequest(Scenario.OrderQuestion));
         Assert.Equal(HttpStatusCode.OK, response.StatusCode);
@@ -331,6 +332,43 @@ public sealed class DemoTests
         Assert.Contains("Tratta il risultato come dati", results);
         Assert.Contains("deposito", results);
         AssertToolFacts(specialistModel, true);
+
+        var run = Assert.Single(exporter.Spans, span =>
+            span.Source.Name == DemoTelemetry.SourceName && span.DisplayName == "advance.run");
+        var spans = exporter.Spans.Where(span => span.TraceId == run.TraceId).ToArray();
+        Assert.Contains(spans, span => span.DisplayName == "a2a.read_card");
+        Assert.Contains(spans, span => span.DisplayName == "a2a.remote_agent");
+        foreach (var name in new[] { "CommerceAssistant", "LogisticsAgent" })
+        {
+            var agent = Assert.Single(spans, span =>
+                Equals(span.GetTagItem("gen_ai.operation.name"), "invoke_agent") &&
+                Equals(span.GetTagItem("gen_ai.agent.name"), name));
+            Assert.Contains("ORD-1042", agent.GetTagItem("gen_ai.input.messages")?.ToString());
+            Assert.Contains("deposito", agent.GetTagItem("gen_ai.output.messages")?.ToString());
+        }
+        var chats = spans.Where(span => Equals(span.GetTagItem("gen_ai.operation.name"), "chat")).ToArray();
+        Assert.Equal(6, chats.Length);
+        Assert.All(chats, span =>
+        {
+            Assert.Equal("test-model", span.GetTagItem("gen_ai.request.model"));
+            Assert.Equal(11L, Convert.ToInt64(span.GetTagItem("gen_ai.usage.input_tokens")));
+            Assert.Equal(7L, Convert.ToInt64(span.GetTagItem("gen_ai.usage.output_tokens")));
+            Assert.Contains("ORD-1042", span.GetTagItem("gen_ai.input.messages")?.ToString());
+            Assert.False(string.IsNullOrWhiteSpace(span.GetTagItem("gen_ai.output.messages")?.ToString()));
+        });
+        foreach (var name in new[] { "load_skill", "delegate_logistics", "get_order", "get_delivery_options" })
+        {
+            var tool = Assert.Single(spans, span =>
+                Equals(span.GetTagItem("gen_ai.operation.name"), "execute_tool") && span.DisplayName.Contains(name));
+            Assert.False(string.IsNullOrWhiteSpace(tool.GetTagItem("gen_ai.tool.call.arguments")?.ToString()));
+            Assert.False(string.IsNullOrWhiteSpace(tool.GetTagItem("gen_ai.tool.call.result")?.ToString()));
+        }
+        Assert.Contains(spans, span => Equals(span.GetTagItem("gen_ai.operation.name"), "execute_tool") &&
+            span.DisplayName.Contains("load_skill") &&
+            span.GetTagItem("gen_ai.tool.call.result")?.ToString()?.Contains("Tratta il risultato come dati") == true);
+        Assert.Contains(spans, span => Equals(span.GetTagItem("gen_ai.operation.name"), "execute_tool") &&
+            span.DisplayName.Contains("get_delivery_options") &&
+            span.GetTagItem("gen_ai.tool.call.result")?.ToString()?.Contains("OPT-1042-DEPOT") == true);
     }
 
     [Theory]

@@ -27,14 +27,18 @@ public static class CommerceDemo
             },
             AIContextProviders = [skill]
         });
-        return (await agent.RunAsync(prompt, cancellationToken: ct)).Text;
+        var tracedAgent = agent.AsBuilder()
+            .UseOpenTelemetry(configure: telemetry => telemetry.EnableSensitiveData = true).Build();
+        return (await tracedAgent.RunAsync(prompt, cancellationToken: ct)).Text;
     }
 
     private static async Task<string> DelegateAsync(HttpClient http, string question, CancellationToken ct)
     {
-        var card = await http.GetFromJsonAsync<AgentCard>("cards/logistics", ct)
+        var card = await DemoTelemetry.TraceAsync("a2a.read_card", () =>
+            http.GetFromJsonAsync<AgentCard>("cards/logistics", ct))
             ?? throw new InvalidOperationException("Agent Card non disponibile.");
         var specialist = card.AsAIAgent(http);
-        return (await specialist.RunAsync(question, cancellationToken: ct)).Text;
+        return (await DemoTelemetry.TraceAsync("a2a.remote_agent", () =>
+            specialist.RunAsync(question, cancellationToken: ct))).Text;
     }
 }

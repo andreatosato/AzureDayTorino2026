@@ -257,9 +257,9 @@ confini dei processi e casi d'uso con tre schemi della demo. E' statica e non ch
 Le chiamate manuali sono in [demo.http](demo.http); OpenAPI e' disponibile su
 `/openapi/v1.json` su entrambe le app in Development.
 
-### Tracce AI e tempi BASIC
+### Tracce AI BASIC/ADVANCE e tempi BASIC
 
-Gli agenti BASIC e lo specialista A2A usano l'instrumentazione OpenTelemetry
+Gli agenti BASIC e ADVANCE, inclusi gli specialisti A2A, usano l'instrumentazione OpenTelemetry
 di Agent Framework. ServiceDefaults registra la stessa sorgente nel tracer
 e nel meter ed esporta verso l'endpoint OTLP fornito da Aspire.
 Non e' necessario aggiungere Application Insights o risorse Azure.
@@ -275,7 +275,7 @@ Dopo aver ricompilato e riavviato AppHost e app interessate:
    gli span `invoke_agent`, `chat` ed `execute_tool`.
 
 Gli span AI contengono nome agente, modello, durata e token quando il provider
-li restituisce. Per questa demo BASIC e' abilitato `EnableSensitiveData=true`
+li restituisce. Per entrambe le demo e' abilitato `EnableSensitiveData=true`
 su tutti gli agenti, incluso lo specialista A2A: vengono esportati anche
 prompt, risposte, argomenti e risultati dei tool. Nel visualizzatore AI Aspire,
 aprire **Input e output**; per i singoli scambi espandere gli span `chat`
@@ -290,7 +290,17 @@ ripristinare `EnableSensitiveData=false`. Dopo una modifica ricompilare,
 riavviare le app e inviare una nuova richiesta: le tracce precedenti senza
 contenuto non possono essere completate retroattivamente.
 
-La UI mostra tempi server inclusivi a fine richiesta: totale, connessione e
+In ADVANCE, avviare `advance-mock-api`, `advance-mcp-server`, `advance-a2a`
+e `advance-web`, poi inviare una richiesta dalla UI ADVANCE. In Aspire aprire
+la traccia del POST `/api/run`: lo span `advance.run` contiene `CommerceAssistant`,
+il caricamento `load_skill`, `delegate_logistics`, `a2a.read_card` e
+`a2a.remote_agent`. Nello stesso Trace ID lo specialista `LogisticsAgent`
+espone le proprie chiamate `chat` e i tool `get_order` e `get_delivery_options`,
+con argomenti e risultati sensibili. I servizi MCP e Mock API restano visibili
+come chiamate HTTP; non usano un modello proprio. La risposta ADVANCE resta
+testuale: le informazioni AI si consultano nella dashboard Aspire.
+
+La UI BASIC mostra tempi server inclusivi a fine richiesta: totale, connessione e
 discovery MCP, lettura Agent Card, chiamata A2A remota, agente, chiamate al
 modello e tool locali/MCP. Ogni riga include offset iniziale e durata in ms.
 I tempi dell'agente includono i sotto-span e **non vanno sommati**.

@@ -18,7 +18,8 @@ public static class LogisticsAgent
             AIFunctionFactory.Create((string orderId, CancellationToken ct) =>
                 CallMcpAsync(clients, "get_delivery_options", orderId, ct),
                 "get_delivery_options", "Legge le alternative di consegna dal server MCP.")
-        ]);
+        ])
+        .AsBuilder().UseOpenTelemetry(configure: telemetry => telemetry.EnableSensitiveData = true).Build();
 
     private static async Task<string> CallMcpAsync(IHttpClientFactory clients, string tool, string orderId, CancellationToken ct)
     {

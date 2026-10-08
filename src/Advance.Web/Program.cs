@@ -26,7 +26,8 @@ app.MapPost("/api/run", async (AdvanceRequest request, IChatClient model,
             ["prompt"] = ["Inserisci una richiesta da 1 a 2000 caratteri."]
         });
     }
-    return Results.Text(await CommerceDemo.RunAsync(model, clients.CreateClient("specialists"), request.Prompt, ct));
+    return Results.Text(await DemoTelemetry.TraceAsync("advance.run", () =>
+        CommerceDemo.RunAsync(model, clients.CreateClient("specialists"), request.Prompt, ct)));
 }).WithSummary("Advance.Web: Commerce con Skill, delega A2A e tool MCP.")
     .Produces<string>(200, "text/plain").ProducesValidationProblem().ProducesProblem(502).ProducesProblem(503);
 app.Run();

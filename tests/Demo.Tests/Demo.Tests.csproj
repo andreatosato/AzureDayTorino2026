@@ -24,8 +24,8 @@
   <ItemGroup>
     <ProjectReference Include="..\..\src\Advance.MockApi\Advance.MockApi.csproj" />
     <ProjectReference Include="..\..\src\Advance.McpServer\Advance.McpServer.csproj" />
-    <ProjectReference Include="..\..\src\Basic.Orchestrator\Basic.Orchestrator.csproj" />
-    <ProjectReference Include="..\..\src\Advance.Commerce\Advance.Commerce.csproj" />
+    <ProjectReference Include="..\..\src\Basic.Web\Basic.Web.csproj" />
+    <ProjectReference Include="..\..\src\Advance.Web\Advance.Web.csproj" />
     <ProjectReference Include="..\..\src\Advance.A2A\Advance.A2A.csproj" />
   </ItemGroup>
 

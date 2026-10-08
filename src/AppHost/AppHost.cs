@@ -19,27 +19,27 @@ var modelKey = key is not null
 var basicMcp = builder.AddProject<Projects.Basic_McpServer>("basic-mcp-server", launchProfileName: "http")
     .WithHttpHealthCheck("/health")
     .WithExplicitStart();
-var basicSpecialist = builder.AddProject<Projects.Basic_A2A>("basic-specialists", launchProfileName: "http")
+var basicSpecialist = builder.AddProject<Projects.Basic_A2A>("basic-a2a", launchProfileName: "http")
     .WithHttpHealthCheck("/health")
     .WithExplicitStart();
 
-var basic = builder.AddProject<Projects.Basic_Orchestrator>("basic", launchProfileName: "http")
+var basic = builder.AddProject<Projects.Basic_Web>("basic-web", launchProfileName: "http")
     .WithReference(basicMcp, "mcp-server").WaitFor(basicMcp)
     .WithReference(basicSpecialist, "specialists").WaitFor(basicSpecialist)
     .WithExplicitStart();
 
-var commerce = builder.AddProject<Projects.Advance_MockApi>("commerce", launchProfileName: "http")
+var commerce = builder.AddProject<Projects.Advance_MockApi>("advance-mock-api", launchProfileName: "http")
     .WithHttpHealthCheck("/health")
     .WithExplicitStart();
 var advanceMcp = builder.AddProject<Projects.Advance_McpServer>("advance-mcp-server", launchProfileName: "http")
-    .WithReference(commerce).WaitFor(commerce)
+    .WithReference(commerce, "commerce").WaitFor(commerce)
     .WithHttpHealthCheck("/health")
     .WithExplicitStart();
-var advanceSpecialist = builder.AddProject<Projects.Advance_A2A>("advance-specialists", launchProfileName: "http")
+var advanceSpecialist = builder.AddProject<Projects.Advance_A2A>("advance-a2a", launchProfileName: "http")
     .WithReference(advanceMcp, "mcp-server").WaitFor(advanceMcp)
     .WithHttpHealthCheck("/health")
     .WithExplicitStart();
-var advance = builder.AddProject<Projects.Advance_Commerce>("advance", launchProfileName: "http")
+var advance = builder.AddProject<Projects.Advance_Web>("advance-web", launchProfileName: "http")
     .WithReference(advanceSpecialist, "specialists").WaitFor(advanceSpecialist)
     .WithExplicitStart();
 

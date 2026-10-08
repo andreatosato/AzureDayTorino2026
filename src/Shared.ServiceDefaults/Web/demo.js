@@ -5,6 +5,71 @@ const status = document.querySelector("#status");
 const panel = document.querySelector(".response-panel");
 const submit = form.querySelector('[type="submit"]');
 const initialPrompt = promptInput.value;
+const timingsPanel = document.querySelector("#timings-panel");
+const milliseconds = new Intl.NumberFormat("it-IT", { maximumFractionDigits: 2 });
+const tokenNumbers = new Intl.NumberFormat("it-IT", { maximumFractionDigits: 0 });
+function formatTokens(value) {
+  return value == null ? "Non disponibili" : tokenNumbers.format(value);
+}
+function clearTimings(message = "In attesa") {
+  if (!timingsPanel) return;
+  document.querySelector("#timings-body").replaceChildren();
+  document.querySelector("#trace-id").textContent = "-";
+  document.querySelector("#timings-summary").textContent = message;
+  document.querySelector("#input-tokens").textContent = message;
+  document.querySelector("#output-tokens").textContent = message;
+  document.querySelector("#local-token-summary").textContent = `Token Web: ${message.toLowerCase()}.`;
+  document.querySelector("#timings-state").textContent = message === "In attesa"
+    ? "Invia una richiesta per vedere le misure effettive." : message;
+  document.querySelector("#remote-agent").hidden = true;
+  document.querySelector("#remote-timings-body").replaceChildren();
+}
+function showTimings(result) {
+  document.querySelector("#timings-summary").textContent =
+    `${milliseconds.format(result.durationMs)} ms`;
+  document.querySelector("#input-tokens").textContent = formatTokens(result.totalInputTokens);
+  document.querySelector("#output-tokens").textContent = formatTokens(result.totalOutputTokens);
+  document.querySelector("#local-token-summary").textContent =
+    `Token Web: input ${formatTokens(result.inputTokens)}, output ${formatTokens(result.outputTokens)}.`;
+  document.querySelector("#timings-state").textContent = "Misure della richiesta completata.";
+  document.querySelector("#trace-id").textContent = result.traceId;
+  showSteps(document.querySelector("#timings-body"), result.steps);
+  if (result.remoteAgent) {
+    const agent = result.remoteAgent;
+    const execution = agent.execution;
+    const agentName = execution?.steps.find(step => step.agentName)?.agentName;
+    document.querySelector("#remote-agent-identity").textContent =
+      [agent.name, agentName, agent.version ? `Versione ${agent.version}` : null].filter(Boolean).join(" / ");
+    document.querySelector("#remote-agent-description").textContent = agent.description ?? "Descrizione non disponibile.";
+    document.querySelector("#remote-agent-endpoint").textContent = agent.endpoint ?? "Non disponibile";
+    document.querySelector("#remote-agent-state").textContent = execution
+      ? `Traccia remota: ${execution.traceId}. Le durate sono inclusive e non vanno sommate.`
+      : "Lo specialista non ha restituito le metriche della demo: conteggi e tempi remoti non disponibili.";
+    document.querySelector("#remote-duration").textContent = execution
+      ? `${milliseconds.format(execution.durationMs)} ms` : "Non disponibili";
+    document.querySelector("#remote-input").textContent = formatTokens(execution?.inputTokens);
+    document.querySelector("#remote-output").textContent = formatTokens(execution?.outputTokens);
+    if (execution) showSteps(document.querySelector("#remote-timings-body"), execution.steps);
+    document.querySelector("#remote-agent").hidden = false;
+  }
+}
+function showSteps(body, steps) {
+  body.replaceChildren();
+  const labels = { invoke_agent: "Agente (inclusivo)", chat: "Modello", execute_tool: "Tool", stage: "Fase" };
+  for (const step of steps) {
+    const row = document.createElement("tr");
+    for (const value of [step.failed ? `${step.name} (errore)` : step.name,
+      labels[step.operation] ?? step.operation,
+      `${milliseconds.format(step.startMs)} ms`, `${milliseconds.format(step.durationMs)} ms`,
+      step.operation === "chat" ? formatTokens(step.inputTokens) : "-",
+      step.operation === "chat" ? formatTokens(step.outputTokens) : "-"]) {
+      const cell = document.createElement("td");
+      cell.textContent = value;
+      row.append(cell);
+    }
+    body.append(row);
+  }
+}
 const examples = {
   mcp: {
     prompt: "Che tempo fa a Torino?",
@@ -46,6 +111,7 @@ form.querySelectorAll('[name="technology"]').forEach(input => input.addEventList
   answer.textContent = "Invia la richiesta per provare il percorso selezionato.";
   status.textContent = "Pronto";
   panel.classList.remove("error");
+  clearTimings();
 }));
 document.querySelector("#sample").addEventListener("click", resetExample);
 form.addEventListener("submit", async event => {
@@ -57,6 +123,7 @@ form.addEventListener("submit", async event => {
   const controls = [...form.querySelectorAll("button, input, textarea")];
   controls.forEach(control => control.disabled = true);
   panel.classList.remove("error");
+  clearTimings("In esecuzione");
   panel.setAttribute("aria-busy", "true");
   submit.textContent = "Richiesta in corso...";
   status.textContent = "In esecuzione";
@@ -64,7 +131,7 @@ form.addEventListener("submit", async event => {
   try {
     const response = await fetch(form.action, {
       method: "POST",
-      headers: { "Content-Type": "application/json" },
+      headers: { "Content-Type": "application/json", Accept: timingsPanel ? "application/json" : "text/plain" },
       body: JSON.stringify(payload),
       signal: AbortSignal.timeout(130000)
     });
@@ -77,9 +144,16 @@ form.addEventListener("submit", async event => {
       }
       throw new Error(message);
     }
-    answer.textContent = await response.text();
+    if (timingsPanel) {
+      const result = await response.json();
+      answer.textContent = result.text;
+      showTimings(result);
+    } else {
+      answer.textContent = await response.text();
+    }
     status.textContent = "Completato";
   } catch (error) {
+    clearTimings("Non disponibili: richiesta fallita");
     panel.classList.add("error");
     status.textContent = "Errore";
     answer.textContent = error.name === "TimeoutError"

@@ -1,0 +1,98 @@
+<!doctype html>
+<html lang="it">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>MCP, A2A e Skill: differenze | Basic.Web</title>
+  <link rel="stylesheet" href="/demo.css">
+</head>
+<body>
+<main>
+  <header><span class="eyebrow">AZURE DAY TORINO / DEMO LAB</span><span class="badge">Microsoft Agent Framework + Aspire</span></header>
+  <nav class="page-nav" aria-label="Navigazione BASIC"><a href="/">Prova le tecnologie</a><a href="/tecnologie.html" aria-current="page">MCP, A2A e Skill: differenze e schemi</a></nav>
+  <section class="intro">
+    <p class="eyebrow">BASIC / LA MAPPA DELLE TECNOLOGIE</p>
+    <h1>Tool. Agenti. Procedure<span class="dot">.</span></h1>
+    <p class="lead">MCP collega strumenti e dati. A2A collega agenti. Una Skill insegna all'agente come svolgere un compito.</p>
+  </section>
+  <section class="panel">
+    <h2>Tre concetti, non tre alternative equivalenti</h2>
+    <p>MCP e A2A sono protocolli di comunicazione. Una Skill &egrave; un pacchetto di istruzioni e risorse: non &egrave; un protocollo di rete e non &egrave; un agente autonomo.</p>
+    <p>In questa BASIC, <strong>Basic.Web &egrave; il punto di ingresso centrale</strong>: la scelta dell'utente avvia uno dei tre percorsi con uno switch. Non c'&egrave; un orchestratore intelligente che pianifica o sceglie le tecnologie.</p>
+    <div class="comparison-scroll">
+      <table class="timings-table comparison-table">
+        <caption>Confronto rapido</caption>
+        <thead><tr><th scope="col">Aspetto</th><th scope="col">MCP</th><th scope="col">A2A</th><th scope="col">Skill</th></tr></thead>
+        <tbody>
+          <tr><th scope="row">Domanda chiave</th><td>Quale strumento o dato posso usare?</td><td>A quale agente posso delegare?</td><td>Come devo svolgere questo compito?</td></tr>
+          <tr><th scope="row">Cosa rende disponibile</th><td>Tool, risorse e prompt; qui solo il tool meteo.</td><td>Le capacit&agrave; di un agente, descritte nella Agent Card.</td><td>Istruzioni, conoscenza e risorse di supporto, a partire da SKILL.md.</td></tr>
+          <tr><th scope="row">Chi usa il modello nella demo</th><td>L'agente locale nel Web. Il server MCP esegue il tool, senza un proprio modello.</td><td>Lo specialista remoto usa il proprio modello; poi l'assistente nel Web presenta il risultato.</td><td>L'agente locale nel Web carica e segue la procedura.</td></tr>
+          <tr><th scope="row">Confine nella BASIC</th><td>HTTP tra il client nel Web e Basic.McpServer.</td><td>HTTP tra il Web e Basic.A2A, con esecuzione in un altro processo.</td><td>File e tool locali nel processo Web; nessun server Skill.</td></tr>
+          <tr><th scope="row">Quando serve</th><td>Integrare API, strumenti e fonti dati con un'interfaccia comune.</td><td>Collaborare con uno specialista che mantiene la propria logica, i propri tool e il proprio contesto.</td><td>Riutilizzare una procedura o conoscenza di dominio, caricandola quando serve.</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+  <div class="technology-cards">
+    <section class="panel technology-card">
+      <p class="eyebrow">01 / MODEL CONTEXT PROTOCOL</p>
+      <h2>MCP: uso uno strumento</h2>
+      <p>L'agente &egrave; il client: scopre i tool disponibili e il modello decide quale chiamare. Il server espone la funzionalit&agrave; e ne restituisce il risultato. Una chiamata al tool non &egrave; una delega a un secondo agente.</p>
+      <figure>
+        <div class="technology-diagram" role="img" aria-label="L'agente nel Web scopre e chiama get_weather via MCP; Basic.McpServer restituisce il meteo all'agente, che risponde all'utente.">
+          <div class="diagram-node"><strong>Basic.Web</strong><span>Agente + modello locale</span></div>
+          <span class="diagram-arrow" aria-hidden="true">&darr;</span>
+          <div class="diagram-node diagram-boundary"><strong>Client MCP &harr; HTTP</strong><span>Scoperta e chiamata get_weather</span></div>
+          <span class="diagram-arrow" aria-hidden="true">&darr;</span>
+          <div class="diagram-node"><strong>Basic.McpServer</strong><span>Esegue il tool meteo</span></div>
+        </div>
+        <figcaption>Il dato torna all'agente locale, che formula la risposta.</figcaption>
+      </figure>
+      <p><strong>Esempio:</strong> &ldquo;Che tempo fa a Torino?&rdquo; &rarr; get_weather &rarr; pioggia, 14 &deg;C.</p>
+      <p class="note">MCP non richiede che il server abbia un modello. In generale supporta anche risorse e prompt; questa demo espone un solo tool.</p>
+    </section>
+    <section class="panel technology-card">
+      <p class="eyebrow">02 / AGENT-TO-AGENT</p>
+      <h2>A2A: delego a uno specialista</h2>
+      <p>Il client legge la Agent Card per conoscere nome, capacit&agrave; ed endpoint. Invia una richiesta allo specialista, che svolge il compito con la propria logica e i propri tool. Il client riceve il risultato senza dover conoscere tutti i dettagli interni.</p>
+      <figure>
+        <div class="technology-diagram" role="img" aria-label="Basic.Web legge la Agent Card e invia la richiesta via A2A a Basic.A2A. TravelTipsAgent usa il proprio modello e il tool get_weather. Il risultato torna al Web.">
+          <div class="diagram-node"><strong>Basic.Web</strong><span>Legge la Agent Card</span></div>
+          <span class="diagram-arrow" aria-hidden="true">&darr;</span>
+          <div class="diagram-node diagram-boundary"><strong>Client A2A &harr; HTTP</strong><span>Richiesta al servizio travel</span></div>
+          <span class="diagram-arrow" aria-hidden="true">&darr;</span>
+          <div class="diagram-node"><strong>Basic.A2A / TravelTipsAgent</strong><span>Modello remoto + get_weather locale</span></div>
+        </div>
+        <figcaption>Lo specialista restituisce i consigli; l'assistente nel Web li presenta.</figcaption>
+      </figure>
+      <p><strong>Esempio:</strong> &ldquo;Dammi due consigli per visitare Torino.&rdquo; &rarr; lo specialista legge il meteo e prepara i consigli.</p>
+      <p class="note">A2A &egrave; la comunicazione tra agenti, non la condivisione automatica del loro contesto. Qui ci sono chiamate al modello sia nel Web sia nel processo remoto.</p>
+    </section>
+    <section class="panel technology-card">
+      <p class="eyebrow">03 / AGENT SKILLS</p>
+      <h2>Skill: carico una procedura</h2>
+      <p>Una Skill fornisce istruzioni riutilizzabili e risorse di supporto. Il provider rende visibili nome e descrizione; l'agente carica il contenuto pertinente e lo segue usando i tool a disposizione. Caricare una Skill non crea un secondo agente.</p>
+      <figure>
+        <div class="technology-diagram" role="img" aria-label="L'agente nel Web chiama load_skill per leggere city-briefing da Basic.Skill. Poi usa i tool C# locali per meteo, cose da portare e attenzioni e prepara il briefing nello stesso processo.">
+          <div class="diagram-node"><strong>Basic.Web</strong><span>Agente + modello locale</span></div>
+          <span class="diagram-arrow" aria-hidden="true">&darr;</span>
+          <div class="diagram-node diagram-boundary"><strong>Basic.Skill / city-briefing</strong><span>load_skill legge SKILL.md</span></div>
+          <span class="diagram-arrow" aria-hidden="true">&darr;</span>
+          <div class="diagram-node"><strong>Tool C# locali</strong><span>Meteo, cose da portare, attenzioni</span></div>
+        </div>
+        <figcaption>Procedura e tool vengono usati dallo stesso agente nel processo Web.</figcaption>
+      </figure>
+      <p><strong>Esempio:</strong> &ldquo;Prepara un briefing per visitare Torino.&rdquo; &rarr; carica city-briefing &rarr; raccoglie i tre dati &rarr; produce il briefing.</p>
+      <p class="note">Qui nessuna rete, MCP o A2A per caricare la Skill e chiamare i suoi tool. Il modello resta su Foundry. Una Skill pu&ograve; includere risorse o script, ma questa demo non esegue script.</p>
+    </section>
+  </div>
+  <section class="panel response-panel">
+    <h2>Possono lavorare insieme?</h2>
+    <p>S&igrave;: una Skill pu&ograve; descrivere una procedura che usa tool MCP; uno specialista A2A pu&ograve; usare a sua volta tool MCP o Skill. I tre concetti sono complementari.</p>
+    <p><strong>Nella BASIC li isoliamo:</strong> ogni invio dimostra un solo percorso. Il diagramma illustra l'architettura, non certifica quali chiamate sono avvenute. Per le operazioni effettive usa il riepilogo token/tempi e le tracce Aspire.</p>
+    <a class="demo-link" href="/#demo-form">Torna alla demo e prova le tre tecnologie &rarr;</a>
+  </section>
+  <footer>Il meteo &egrave; sintetico e conosce solo Torino. La pagina descrittiva non chiama il modello e non consuma token; l'invio dalla demo usa il modello reale configurato in Aspire.</footer>
+</main>
+</body>
+</html>

@@ -1,6 +1,7 @@
 <Solution>
   <Project Path="src/AppHost/AppHost.csproj" />
   <Folder Name="/Basic/">
+    <Project Path="src/Basic.Web/Basic.Web.csproj" />
     <Project Path="src/Basic.Orchestrator/Basic.Orchestrator.csproj" />
     <Project Path="src/Basic.McpServer/Basic.McpServer.csproj" />
     <Project Path="src/Basic.A2A/Basic.A2A.csproj" />
@@ -8,6 +9,7 @@
     <Project Path="src/Basic.Data/Basic.Data.csproj" />
   </Folder>
   <Folder Name="/Advance/">
+    <Project Path="src/Advance.Web/Advance.Web.csproj" />
     <Project Path="src/Advance.Commerce/Advance.Commerce.csproj" />
     <Project Path="src/Advance.McpServer/Advance.McpServer.csproj" />
     <Project Path="src/Advance.A2A/Advance.A2A.csproj" />

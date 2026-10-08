@@ -19,6 +19,13 @@ Content-Type: application/json
 
 {"technology":"a2a","prompt":"Dammi due consigli per visitare Torino. Leggi il meteo dal tuo tool."}
 
+### BASIC: risposta e tempi misurati (stesso endpoint, formato JSON)
+POST {{basic}}/api/run
+Content-Type: application/json
+Accept: application/json
+
+{"technology":"skill","prompt":"Prepara un briefing per visitare Torino: meteo, cosa portare e attenzioni."}
+
 ### BASIC: Skill
 POST {{basic}}/api/run
 Content-Type: application/json

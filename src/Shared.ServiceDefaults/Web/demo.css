@@ -46,10 +46,42 @@ button:disabled { opacity: .65; cursor: wait; }
 .response-panel.error { border-color: #b22e36; }
 .response-panel.error #status { color: #a3232b; }
 footer { color: #49627b; font-size: 12px; line-height: 1.7; margin-top: 24px; }
+.timings-panel { margin-top: 22px; }
+.execution-metrics { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 14px; margin-bottom: 20px; }
+.execution-metrics > div { padding: 16px; border-radius: 10px; background: #edf3f8; }
+.execution-metrics span { display: block; font-size: 13px; color: #49627b; margin-bottom: 8px; }
+.execution-metrics strong { font-size: 22px; overflow-wrap: anywhere; }
+.timings-scroll { overflow-x: auto; }
+.timings-table { width: 100%; border-collapse: collapse; font-size: 14px; }
+.timings-table th, .timings-table td { padding: 10px; border-bottom: 1px solid #dbe4ed; text-align: left; }
+.timings-table th { color: #49627b; }
+#trace-id { overflow-wrap: anywhere; }
+.remote-agent { margin-top: 24px; padding-top: 20px; border-top: 1px solid #dbe4ed; }
+#remote-agent-endpoint { overflow-wrap: anywhere; }
+.timings-table caption { text-align: left; color: #49627b; margin-bottom: 12px; font-size: 13px; }
+.page-nav { display: flex; gap: 22px; flex-wrap: wrap; padding-top: 20px; font-size: 14px; }
+a { color: #086882; text-underline-offset: 3px; }
+.page-nav [aria-current="page"] { font-weight: 700; }
+.submit-row a { font-size: 13px; }
+.comparison-scroll { overflow-x: auto; }
+.comparison-table { min-width: 680px; line-height: 1.6; }
+.comparison-table th, .comparison-table td { vertical-align: top; }
+.technology-cards { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 22px; margin-top: 22px; }
+.technology-card p, .response-panel p { line-height: 1.7; }
+.technology-card figure { margin: 24px 0; }
+.technology-diagram { display: grid; gap: 8px; }
+.diagram-node { border: 1px solid #cbd9e5; border-radius: 10px; padding: 16px; text-align: center; background: #edf3f8; }
+.diagram-node span { display: block; font-size: 13px; color: #49627b; margin-top: 7px; }
+.diagram-boundary { background: #e8f6fa; border-color: #087c9c; }
+.diagram-arrow { text-align: center; font-size: 24px; color: #086882; }
+figcaption { margin-top: 14px; font-size: 13px; color: #49627b; line-height: 1.6; }
+.demo-link { display: inline-block; font-weight: 650; margin-top: 10px; }
 @media (max-width: 760px) {
   main { padding: 20px 16px; }
   header { align-items: flex-start; flex-direction: column; }
   .workspace { grid-template-columns: 1fr; }
   .panel { padding: 21px; }
   .submit-row { align-items: flex-start; flex-direction: column; }
+  .execution-metrics { grid-template-columns: 1fr; }
+  .technology-cards { grid-template-columns: 1fr; }
 }

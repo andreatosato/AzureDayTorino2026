@@ -11,6 +11,7 @@ builder.Services.AddKeyedSingleton<AIAgent>("travel", (services, _) =>
 builder.AddA2AServer("travel");
 var app = builder.Build();
 app.UseDemoDefaults();
+app.UseRemoteExecutionTelemetry("/a2a/travel");
 app.MapA2AHttpJson("travel", "/a2a/travel");
 app.MapGet("/cards/travel", (HttpRequest request) => new AgentCard
 {

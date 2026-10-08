@@ -27,7 +27,7 @@ app.MapPost("/api/run", async (AdvanceRequest request, IChatClient model,
         });
     }
     return Results.Text(await CommerceDemo.RunAsync(model, clients.CreateClient("specialists"), request.Prompt, ct));
-}).WithSummary("ADVANCE: Commerce con Skill, delega A2A e tool MCP.")
+}).WithSummary("Advance.Web: Commerce con Skill, delega A2A e tool MCP.")
     .Produces<string>(200, "text/plain").ProducesValidationProblem().ProducesProblem(502).ProducesProblem(503);
 app.Run();
 

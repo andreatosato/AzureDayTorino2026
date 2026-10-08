@@ -26,6 +26,8 @@ public static class SkillDemo
             AIContextProviders = [skill]
         });
 
-        return (await agent.RunAsync(prompt, cancellationToken: ct)).Text;
+        var tracedAgent = agent.AsBuilder()
+            .UseOpenTelemetry(configure: telemetry => telemetry.EnableSensitiveData = true).Build();
+        return (await tracedAgent.RunAsync(prompt, cancellationToken: ct)).Text;
     }
 }

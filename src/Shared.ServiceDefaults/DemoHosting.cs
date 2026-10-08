@@ -1,9 +1,11 @@
 using System.ClientModel;
 using System.ClientModel.Primitives;
+using System.Diagnostics;
 using Azure.Identity;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Http.Features;
 using Microsoft.AspNetCore.Http.Timeouts;
 using Microsoft.Extensions.AI;
 using Microsoft.Extensions.Configuration;
@@ -19,7 +21,9 @@ public static class DemoHosting
     public static void AddDemoServices(this WebApplicationBuilder builder, bool withModel = true)
     {
         builder.AddServiceDefaults();
-        builder.Services.AddProblemDetails();
+        builder.Services.AddProblemDetails(options =>
+            options.CustomizeProblemDetails = context =>
+                context.ProblemDetails.Extensions["traceId"] = GetTraceId(context.HttpContext));
         builder.Services.AddExceptionHandler<DemoExceptionHandler>();
         builder.Services.AddRequestTimeouts(options =>
             options.DefaultPolicy = new RequestTimeoutPolicy { Timeout = TimeSpan.FromMinutes(2) });
@@ -75,6 +79,10 @@ public static class DemoHosting
         app.UseRequestTimeouts();
         app.MapDefaultEndpoints();
     }
+
+    internal static string GetTraceId(HttpContext context) =>
+        context.Features.Get<IHttpActivityFeature>()?.Activity.TraceId.ToString()
+        ?? Activity.Current?.TraceId.ToString() ?? context.TraceIdentifier;
 }
 
 public sealed class ModelConfigurationException : InvalidOperationException
@@ -89,14 +97,15 @@ internal sealed class DemoExceptionHandler(ILogger<DemoExceptionHandler> logger)
 {
     public async ValueTask<bool> TryHandleAsync(HttpContext context, Exception exception, CancellationToken cancellationToken)
     {
-        logger.LogError(exception, "Demo fallita. TraceId: {TraceId}", context.TraceIdentifier);
+        var traceId = DemoHosting.GetTraceId(context);
+        logger.LogError(exception, "Demo fallita. TraceId: {TraceId}", traceId);
         var missingModel = exception is ModelConfigurationException;
         context.Response.StatusCode = missingModel ? StatusCodes.Status503ServiceUnavailable : StatusCodes.Status502BadGateway;
         await Results.Problem(
             statusCode: context.Response.StatusCode,
             title: missingModel ? "Modello non configurato" : "Errore durante la demo",
             detail: missingModel ? exception.Message : "Una dipendenza o l'agente ha restituito un errore. Consultare i log in Aspire.",
-            extensions: new Dictionary<string, object?> { ["traceId"] = context.TraceIdentifier })
+            extensions: new Dictionary<string, object?> { ["traceId"] = traceId })
             .ExecuteAsync(context);
         return true;
     }

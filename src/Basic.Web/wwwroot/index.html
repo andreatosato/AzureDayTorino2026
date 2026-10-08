@@ -1,0 +1,97 @@
+<!doctype html>
+<html lang="it">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Basic.Web | MCP, A2A, Skill</title>
+  <link rel="stylesheet" href="/demo.css">
+  <script src="/demo.js" defer></script>
+</head>
+<body>
+<main>
+  <header><span class="eyebrow">AZURE DAY TORINO / DEMO LAB</span><span class="badge">Microsoft Agent Framework + Aspire</span></header>
+  <nav class="page-nav" aria-label="Navigazione BASIC"><a href="/" aria-current="page">Prova le tecnologie</a><a href="/tecnologie.html">MCP, A2A e Skill: differenze e schemi</a></nav>
+  <section class="intro">
+    <p class="eyebrow">01 / LE SINGOLE TECNOLOGIE</p>
+    <h1>BASIC<span class="dot">.</span></h1>
+    <p class="lead">Una richiesta. Una tecnologia. Un concetto da portare a casa.</p>
+  </section>
+  <div class="workspace">
+    <section class="panel">
+      <h2>Prova una tecnologia</h2>
+      <form id="demo-form" action="/api/run">
+        <fieldset>
+          <legend>1. Scegli il percorso</legend>
+          <div class="choices">
+            <label><input type="radio" name="technology" value="mcp" checked><strong>MCP</strong><span>Usa un tool</span></label>
+            <label><input type="radio" name="technology" value="a2a"><strong>A2A</strong><span>Delega a un agente</span></label>
+            <label><input type="radio" name="technology" value="skill"><strong>Skill</strong><span>Carica una procedura</span></label>
+          </div>
+        </fieldset>
+        <label class="prompt-label" for="prompt">2. Scrivi la richiesta</label>
+        <textarea id="prompt" name="prompt" required maxlength="2000" rows="5">Che tempo fa a Torino?</textarea>
+        <button class="sample" type="button" id="sample">Ripristina esempio</button>
+        <div class="submit-row"><button class="primary" type="submit">Invia richiesta <span aria-hidden="true">&rarr;</span></button><span>Ogni invio riparte da zero.</span><a href="#timings-panel">Vedi token e tempi</a></div>
+      </form>
+    </section>
+    <aside class="panel explainer">
+      <span class="eyebrow">COSA SUCCEDE</span>
+      <h2 id="concept-title">MCP: uso uno strumento</h2>
+      <p id="concept-description">L'agente scopre il tool get_weather sul server MCP e lo chiama per leggere il meteo.</p>
+      <div class="flow" id="flow">Richiesta &rarr; agente &rarr; tool MCP &rarr; meteo</div>
+      <p class="note" id="fixture-note">Il mock meteo conosce solo Torino: pioggia, 14 &deg;C. Non consulta previsioni reali.</p>
+      <p class="note">Il diagramma descrive il percorso previsto, non una traccia dell'esecuzione. Per tool e chiamate effettive usa le tracce Aspire.</p>
+      <p class="note"><strong>Basic.Web:</strong> riceve la richiesta e avvia il percorso scelto con un semplice switch. MCP e A2A usano i client Orchestrator; Skill usa la libreria locale. Nessun planner e nessuna dipendenza da Commerce.</p>
+    </aside>
+  </div>
+  <section class="panel response-panel">
+    <div class="response-heading"><h2>Risposta</h2><span id="status" role="status" aria-live="polite">Pronto</span></div>
+    <pre id="answer" aria-live="polite">Scegli una tecnologia e invia la tua prima richiesta.</pre>
+  </section>
+  <section class="panel timings-panel" id="timings-panel">
+    <h2>Token e tempi di esecuzione</h2>
+    <p class="note" id="timings-state" role="status">Invia una richiesta per vedere le misure effettive.</p>
+    <div class="execution-metrics">
+      <div><span>Durata totale server</span><strong id="timings-summary">In attesa</strong></div>
+      <div><span>Token input (totali)</span><strong id="input-tokens">In attesa</strong></div>
+      <div><span>Token output (totali)</span><strong id="output-tokens">In attesa</strong></div>
+    </div>
+    <p class="note">Tempi server delle operazioni effettive, disponibili a richiesta completata.
+      Gli intervalli di agente includono modello e tool: non sommare le righe.
+      Per A2A, la fase remota nel Web include la rete; il pannello dello specialista misura il suo processo.</p>
+    <p class="note">I token totali sommano le chiamate al modello nel Web e, per A2A, nello specialista remoto,
+      senza contare due volte il riepilogo dell'agente.
+      Se il provider non restituisce i conteggi, viene indicato &quot;Non disponibili&quot;, non zero.</p>
+    <p class="note" id="local-token-summary">Token Web: in attesa della richiesta.</p>
+    <p class="note">Cerca questo Trace ID nelle tracce della dashboard Aspire: <code id="trace-id">-</code></p>
+    <h3>Operazioni nel Web</h3>
+    <div class="timings-scroll">
+      <table class="timings-table">
+        <thead><tr><th scope="col">Operazione</th><th scope="col">Tipo</th><th scope="col">Inizio</th><th scope="col">Durata</th><th scope="col">Token input</th><th scope="col">Token output</th></tr></thead>
+        <tbody id="timings-body"></tbody>
+      </table>
+    </div>
+    <section class="remote-agent" id="remote-agent" hidden>
+      <h3>Agente A2A remoto</h3>
+      <p id="remote-agent-identity"></p>
+      <p class="note" id="remote-agent-description"></p>
+      <p class="note">Endpoint dalla Agent Card: <code id="remote-agent-endpoint"></code></p>
+      <p class="note" id="remote-agent-state"></p>
+      <div class="execution-metrics">
+        <div><span>Durata dello specialista</span><strong id="remote-duration"></strong></div>
+        <div><span>Token input (remoto)</span><strong id="remote-input"></strong></div>
+        <div><span>Token output (remoto)</span><strong id="remote-output"></strong></div>
+      </div>
+      <div class="timings-scroll">
+        <table class="timings-table">
+          <caption>Operazioni nel processo dello specialista, con offset relativi alla sua esecuzione.</caption>
+          <thead><tr><th scope="col">Operazione</th><th scope="col">Tipo</th><th scope="col">Inizio</th><th scope="col">Durata</th><th scope="col">Token input</th><th scope="col">Token output</th></tr></thead>
+          <tbody id="remote-timings-body"></tbody>
+        </table>
+      </div>
+    </section>
+  </section>
+  <footer>Dati sintetici. Le risposte usano il modello reale configurato in Aspire e consumano token. Nessuna scrittura, nessuna prenotazione.</footer>
+</main>
+</body>
+</html>

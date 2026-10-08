@@ -18,6 +18,13 @@
         "ASPIRE_DASHBOARD_MCP_ENDPOINT_URL": "http://localhost:18030",
         "ASPIRE_RESOURCE_SERVICE_ENDPOINT_URL": "http://localhost:20079"
       }
+    },
+    {
+      "name": "Attach .NET - Applicazioni Aspire",
+      "type": "coreclr",
+      "request": "attach",
+      "processId": "${command:pickProcess}",
+      "justMyCode": true
     }
   ]
 }

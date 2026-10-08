@@ -7,6 +7,7 @@ using Microsoft.Extensions.ServiceDiscovery;
 using OpenTelemetry;
 using OpenTelemetry.Metrics;
 using OpenTelemetry.Trace;
+using Shared.ServiceDefaults;
 
 namespace Microsoft.Extensions.Hosting;
 
@@ -53,12 +54,14 @@ public static class Extensions
             .WithMetrics(metrics =>
             {
                 metrics.AddAspNetCoreInstrumentation()
+                    .AddMeter(DemoTelemetry.AgentSourceName)
                     .AddHttpClientInstrumentation()
                     .AddRuntimeInstrumentation();
             })
             .WithTracing(tracing =>
             {
                 tracing.AddSource(builder.Environment.ApplicationName)
+                    .AddSource(DemoTelemetry.AgentSourceName, DemoTelemetry.SourceName)
                     .AddAspNetCoreInstrumentation(tracing =>
                         // Exclude health check requests from tracing
                         tracing.Filter = context =>

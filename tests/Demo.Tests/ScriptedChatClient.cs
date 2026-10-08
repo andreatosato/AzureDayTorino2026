@@ -7,6 +7,7 @@ namespace Demo.Tests;
 internal sealed class ScriptedChatClient(params Func<ChatOptions, ChatMessage>[] steps) : IChatClient
 {
     private int _step;
+    public UsageDetails? Usage { get; init; } = new() { InputTokenCount = 11, OutputTokenCount = 7 };
     public List<ChatMessage> LastMessages { get; private set; } = [];
     public List<ChatMessage> FirstMessages { get; private set; } = [];
     public string? FirstInstructions { get; private set; }
@@ -22,7 +23,13 @@ internal sealed class ScriptedChatClient(params Func<ChatOptions, ChatMessage>[]
         if (_step == 0) FirstInstructions = options.Instructions;
         AdvertisedTools.Add(options.Tools?.OfType<AIFunctionDeclaration>().Select(t => t.Name).ToArray() ?? []);
         Assert.True(_step < steps.Length, "Unexpected extra model call.");
-        return Task.FromResult(new ChatResponse(steps[_step++](options)));
+        return Task.FromResult(new ChatResponse(steps[_step++](options))
+        {
+            ModelId = "test-model",
+            Usage = Usage is { } usage
+                ? new() { InputTokenCount = usage.InputTokenCount, OutputTokenCount = usage.OutputTokenCount }
+                : null
+        });
     }
 
     public async IAsyncEnumerable<ChatResponseUpdate> GetStreamingResponseAsync(IEnumerable<ChatMessage> messages,
@@ -33,8 +40,13 @@ internal sealed class ScriptedChatClient(params Func<ChatOptions, ChatMessage>[]
             yield return update;
     }
 
-    public object? GetService(Type serviceType, object? serviceKey = null) =>
-        serviceKey is null && serviceType.IsInstanceOfType(this) ? this : null;
+    public object? GetService(Type serviceType, object? serviceKey = null)
+    {
+        if (serviceKey is not null) return null;
+        if (serviceType == typeof(ChatClientMetadata))
+            return new ChatClientMetadata("test", new Uri("https://example.test"), "test-model");
+        return serviceType.IsInstanceOfType(this) ? this : null;
+    }
 
     public void Dispose() { }
 

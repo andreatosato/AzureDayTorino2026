@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk.Web">
+<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <TargetFramework>net10.0</TargetFramework>
     <Nullable>enable</Nullable>
@@ -8,11 +8,8 @@
     <ProjectReference Include="..\Advance.Data\Advance.Data.csproj" />
     <ProjectReference Include="..\Shared.ServiceDefaults\Shared.ServiceDefaults.csproj" />
     <PackageReference Include="Microsoft.Agents.AI.A2A" Version="1.23.0-preview.260928.1" />
-    <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="10.0.12" />
   </ItemGroup>
   <ItemGroup>
     <None Update="skills\**\*" CopyToOutputDirectory="PreserveNewest" CopyToPublishDirectory="PreserveNewest" />
-    <Content Include="..\Shared.ServiceDefaults\Web\*" Link="web\common\%(Filename)%(Extension)" CopyToOutputDirectory="PreserveNewest" CopyToPublishDirectory="PreserveNewest" />
-    <Content Update="wwwroot\index.html" TargetPath="web\advance\index.html" CopyToOutputDirectory="PreserveNewest" CopyToPublishDirectory="PreserveNewest" />
   </ItemGroup>
 </Project>

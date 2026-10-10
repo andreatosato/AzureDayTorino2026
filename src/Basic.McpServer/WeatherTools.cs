@@ -8,5 +8,8 @@ namespace Basic.McpServer;
 public sealed class WeatherTools
 {
     [McpServerTool(Name = "get_weather"), Description("Leggi il meteo sintetico di Torino.")]
-    public Weather GetWeather(string city) => WeatherTool.GetWeather(city);
+    public Weather GetWeather(string city) 
+    {
+        return WeatherTool.GetWeather(city);
+    }
 }
